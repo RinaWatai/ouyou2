@@ -1,7 +1,7 @@
 class BooksController < ApplicationController
   before_action :authenticate_user!, except: [:root]
-  def show
 
+  def show
     @book = Book.find(params[:id])
     @user = User.find(@book.user_id)
     @book_new = Book.new
@@ -10,8 +10,8 @@ class BooksController < ApplicationController
   def index
     @user = User.find(current_user.id)
     @users = User.all
-    @book = Book.new
     @books = Book.all
+    @book_new = Book.new
   end
 
   def create
