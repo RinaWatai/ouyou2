@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  get 'relation_ships/create'
-  get 'relation_ships/destroy'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   devise_for :users
   root to:"homes#top"
@@ -9,12 +7,10 @@ Rails.application.routes.draw do
    resource :favorite, only: [:create, :destroy]
    resources :book_comments, only: [:create, :destroy]
   end
-  resources :users, only: [:index,:show,:edit,:update] do
-  member do
-    get :follows, :followers
+resources :users, only: [:index, :show, :edit, :update] do
+  resources :relationships, only: [:create, :destroy]
+  get "followings" => "relation_ships#followings", as: "followings"
+  get "followers" => "relation_ships#followers", as: "followers"
   end
-      resource :relationships, only: [:create, :destroy]
-  end
-
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end
+  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
