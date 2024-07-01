@@ -27,8 +27,8 @@ class User < ApplicationRecord
   
   #フォローしていればtrueを返す
   def following?(user)
-    following_users.include?(user)
-  end	
+    followings.include?(user)
+  end
 
 
   def get_profile_image
