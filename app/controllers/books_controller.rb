@@ -1,59 +1,54 @@
 class BooksController < ApplicationController
-  before_action :authenticate_user!, except: [:root]
+  before_action :authenticate_user!
+  before_action :ensure_correct_user, only: [:edit, :update, :destroy]
 
   def show
     @book = Book.find(params[:id])
-    @user = User.find(@book.user_id)
-    @book_new = Book.new
     @book_comment = BookComment.new
   end
 
   def index
-    @user = User.find(current_user.id)
-    @users = User.all
     @books = Book.all
-    @book_new = Book.new
-    @book_comment = BookComment.new
+    @book = Book.new
   end
 
   def create
     @book = Book.new(book_params)
-    @users = User.all
     @book.user_id = current_user.id
     if @book.save
       redirect_to book_path(@book), notice: "You have created book successfully."
     else
       @books = Book.all
-      render :index
+      render 'index'
     end
   end
 
   def edit
-    @book = Book.find(params[:id])
-    @user = current_user
-    if current_user != @book.user
-      redirect_to books_path
-    end
   end
 
   def update
-    @book = Book.find(params[:id])
     if @book.update(book_params)
       redirect_to book_path(@book), notice: "You have updated book successfully."
     else
-      render :edit
+      render "edit"
     end
   end
 
   def destroy
-    comment = BookComment.find(params[:id])
-    comment.destroy
-    redirect_to request.referer
+    @book.destroy
+    redirect_to books_path
   end
 
   private
 
   def book_params
-    params.require(:book).permit(:title, :opinion, :body)
+    params.require(:book).permit(:title, :body)
+  end
+
+  def ensure_correct_user
+    @book = Book.find(params[:id])
+    unless @book.user == current_user
+      redirect_to books_path
+    end
   end
 end
